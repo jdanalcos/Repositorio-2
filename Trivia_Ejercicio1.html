@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia Interactiva</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+        .correct {
+            background-color: green !important;
+            color: white;
+        }
+        .incorrect {
+            background-color: red !important;
+            color: white;
+        }
+        #nextBtn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            display: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Trivia de Conocimientos Generales</h1>
+        <div id="quiz">
+            <p class="question"></p>
+            <div class="options"></div>
+            <button id="nextBtn" onclick="nextQuestion()">Siguiente</button>
+        </div>
+        <div id="result" style="display: none;"></div>
+    </div>
+    <script>
+        const preguntas = [
+            { pregunta: "¿Cuál es el planeta más grande del sistema solar?", opciones: ["Tierra", "Marte", "Júpiter", "Venus"], correcta: 2 },
+            { pregunta: "¿Cuántos continentes hay en la Tierra?", opciones: ["5", "6", "7", "8"], correcta: 2 },
+            { pregunta: "¿Quién pintó la Mona Lisa?", opciones: ["Van Gogh", "Pablo Picasso", "Leonardo da Vinci", "Salvador Dalí"], correcta: 2 },
+            { pregunta: "¿Cuántos huesos tiene el cuerpo humano adulto?", opciones: ["206", "210", "180", "256"], correcta: 0 },
+            { pregunta: "¿Cuál es el metal más caro del mundo?", opciones: ["Oro", "Plata", "Rodio", "Platino"], correcta: 2 },
+            { pregunta: "¿Cuántos lados tiene un hexágono?", opciones: ["5", "6", "7", "8"], correcta: 1 },
+            { pregunta: "¿Qué gas respiran principalmente los seres humanos?", opciones: ["Oxígeno", "Nitrógeno", "Dióxido de carbono", "Helio"], correcta: 0 },
+            { pregunta: "¿Cuál es el océano más grande del mundo?", opciones: ["Atlántico", "Índico", "Pacífico", "Ártico"], correcta: 2 },
+            { pregunta: "¿Cuánto dura un año en la Tierra?", opciones: ["365 días", "400 días", "500 días", "600 días"], correcta: 0 },
+            { pregunta: "¿Quién escribió 'Don Quijote de la Mancha'?", opciones: ["Miguel de Cervantes", "Gabriel García Márquez", "Pablo Neruda", "Julio Cortázar"], correcta: 0 }
+        ];
+
+        let preguntaActual = 0;
+        let puntaje = 0;
+
+        function mostrarPregunta() {
+            document.getElementById("nextBtn").style.display = "none";
+            const quiz = document.getElementById("quiz");
+            const pregunta = document.querySelector(".question");
+            const opcionesDiv = document.querySelector(".options");
+            pregunta.textContent = preguntas[preguntaActual].pregunta;
+            opcionesDiv.innerHTML = "";
+
+            preguntas[preguntaActual].opciones.forEach((opcion, index) => {
+                const button = document.createElement("button");
+                button.textContent = opcion;
+                button.onclick = () => verificarRespuesta(index, button);
+                opcionesDiv.appendChild(button);
+            });
+        }
+
+        function verificarRespuesta(index, button) {
+            const botones = document.querySelectorAll(".options button");
+            botones.forEach(btn => btn.disabled = true);
+
+            if (index === preguntas[preguntaActual].correcta) {
+                button.classList.add("correct");
+                puntaje++;
+            } else {
+                button.classList.add("incorrect");
+                botones[preguntas[preguntaActual].correcta].classList.add("correct");
+            }
+            document.getElementById("nextBtn").style.display = "block";
+        }
+
+        function nextQuestion() {
+            preguntaActual++;
+            if (preguntaActual < preguntas.length) {
+                mostrarPregunta();
+            } else {
+                mostrarResultado();
+            }
+        }
+
+        function mostrarResultado() {
+            const quiz = document.getElementById("quiz");
+            const result = document.getElementById("result");
+            quiz.style.display = "none";
+            result.style.display = "block";
+            let mensaje = "";
+
+            if (puntaje >= 8) {
+                mensaje = "¡Excelente trabajo! Eres un genio del conocimiento general.";
+            } else if (puntaje >= 5) {
+                mensaje = "¡Bien hecho! Tienes buen conocimiento, pero puedes mejorar.";
+            } else {
+                mensaje = "Necesitas mejorar. ¡Sigue aprendiendo y vuelve a intentarlo!";
+            }
+            result.innerHTML = `<h2>Puntaje: ${puntaje} de ${preguntas.length}</h2><p>${mensaje}</p>`;
+        }
+
+        mostrarPregunta();
+    </script>
+</body>
+</html>
